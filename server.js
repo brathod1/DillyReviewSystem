@@ -30,6 +30,23 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
+// --- Password Protection for Staff Routes ---
+app.use(['/staff', '/staff-reviews'], (req, res, next) => {
+  const auth = {login: 'staff', password: 'password'}; // <-- Set your own credentials
+
+  // Parse login from headers
+  const b64auth = (req.headers.authorization || '').split(' ')[1] || '';
+  const [login, password] = Buffer.from(b64auth, 'base64').toString().split(':');
+
+  // Verify login and password are set and correct
+  if (login && password && login === auth.login && password === auth.password) {
+    return next();
+  }
+
+  // Access denied
+  res.set('WWW-Authenticate', 'Basic realm="Staff Area"');
+  res.status(401).send('Authentication required.');
+});
 
 // --- Serve Staff Dashboard ---
 app.get('/staff', (req, res) => {
