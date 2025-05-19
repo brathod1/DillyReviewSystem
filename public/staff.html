@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dilly's Staff Dashboard</title>
+    <link rel="stylesheet" href="assets/styles/style.css">
+</head>
+<body>
+    <div class="dashboard-header">
+        <img src="assets/images/logo.png" alt="Dilly's Logo">
+        <h1>Customer Feedback Dashboard</h1>
+        <p>All 1-3 star reviews are shown below for your attention.</p>
+    </div>
+    <div class="dashboard-container" id="reviews-container">
+        <div class="no-reviews">Loading reviews...</div>
+    </div>
+
+    <script>
+        async function loadReviews() {
+            try {
+                const response = await fetch('/staff-reviews');
+                const reviews = await response.json();
+                const container = document.getElementById('reviews-container');
+
+                if (!reviews.length) {
+                    container.innerHTML = '<div class="no-reviews">No low-star reviews found. Great job! 🎉</div>';
+                    return;
+                }
+
+                container.innerHTML = reviews.map(review => `
+                    <div class="review-card">
+                        <div class="review-rating">${'★'.repeat(review.rating)}${'☆'.repeat(5 - review.rating)}</div>
+                        <div class="review-meta">
+                            <strong>${review.name}</strong> | ${review.phone} <br>
+                            <span>${new Date(review.createdAt).toLocaleString()}</span>
+                        </div>
+                        <div class="review-feedback">${review.feedback}</div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                document.getElementById('reviews-container').innerHTML =
+                    '<div class="no-reviews">⚠️ Failed to load reviews. Please try again later.</div>';
+            }
+        }
+        loadReviews();
+    </script>
+</body>
+</html>
