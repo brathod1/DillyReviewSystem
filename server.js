@@ -2,7 +2,7 @@ const express = require('express');
 const { body, validationResult } = require('express-validator');
 const mongoose = require('mongoose');
 const path = require('path');
-mongoose.connect(process.env.MONGODB_URI) 
+mongoose.connect(process.env.MONGODB_URI)
 
 // --- Mongoose Review Model ---
 const reviewSchema = new mongoose.Schema({
@@ -48,6 +48,7 @@ app.use(['/staff', '/staff-reviews'], (req, res, next) => {
   res.status(401).send('Authentication required.');
 });
 
+
 // --- Serve Staff Dashboard ---
 app.get('/staff', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'staff.html'));
@@ -78,7 +79,6 @@ app.post(
     }
   }
 );
-mongoose.connect(process.env.MONGODB_URI)
 
 // --- Get All Low-Rated Reviews (for staff dashboard) ---
 app.get('/staff-reviews', async (req, res) => {
