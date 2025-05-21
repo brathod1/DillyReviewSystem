@@ -4,4 +4,9 @@
     "express-validator": "^7.2.1",
     "mongoose": "^8.15.0"
   }
+  ,"scripts": {
+  "start": "node server.js"
 }
+}
+
+  
