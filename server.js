@@ -3,7 +3,7 @@ const { body, validationResult } = require('express-validator');
 const mongoose = require('mongoose');
 const path = require('path');
 
-
+mongoose.connect(process.env.MONGODB_URI)
 
 
 
