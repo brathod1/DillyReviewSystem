@@ -1,49 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dilly's Staff Dashboard</title>
-    <link rel="stylesheet" href="assets/styles/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Customer Feedback Dashboard</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="dashboard-header">
-        <img src="assets/images/logo.png" alt="Dilly's Logo">
-        <h1>Customer Feedback Dashboard</h1>
-        <p>All 1-3 star reviews are shown below for your attention.</p>
+  <header class="dashboard-header">
+    <img src="images/logo.png" alt="Logo">
+    <h1>Customer Feedback Dashboard</h1>
+    <p>All 1-3 star reviews are shown below for your attention.</p>
+  </header>
+  <main class="dashboard-container">
+    <div id="reviews">Loading reviews...</div>
+  </main>
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-col">
+        <h3>Contact Us</h3>
+        <hr>
+        <ul>
+          <li>Email: info@example.com</li>
+          <li>Phone: 123-456-7890</li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h3>Follow Us</h3>
+        <hr>
+        <div class="footer-social">
+          <a href="#"><img src="images/fb.png" alt="Facebook"></a>
+          <a href="#"><img src="images/ig.png" alt="Instagram"></a>
+        </div>
+      </div>
     </div>
-    <div class="dashboard-container" id="reviews-container">
-        <div class="no-reviews">Loading reviews...</div>
+    <div class="footer-bottom">
+      <span>&copy; 2025 Dilly Restaurant</span>
+      <span>All rights reserved.</span>
     </div>
+  </footer>
+  <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+        const reviewsDiv = document.getElementById('reviews');
+        try {
+            const response = await fetch('/reviews');
+            if (!response.ok) throw new Error('Failed to fetch reviews');
+            const reviews = await response.json();
 
-    <script>
-        async function loadReviews() {
-            try {
-                const response = await fetch('/staff-reviews');
-                const reviews = await response.json();
-                const container = document.getElementById('reviews-container');
-
-                if (!reviews.length) {
-                    container.innerHTML = '<div class="no-reviews">No low-star reviews found. Great job! 🎉</div>';
-                    return;
-                }
-
-                container.innerHTML = reviews.map(review => `
-                    <div class="review-card">
-                        <div class="review-rating">${'★'.repeat(review.rating)}${'☆'.repeat(5 - review.rating)}</div>
-                        <div class="review-meta">
-                            <strong>${review.name}</strong> | ${review.phone} <br>
-                            <span>${new Date(review.createdAt).toLocaleString()}</span>
-                        </div>
-                        <div class="review-feedback">${review.feedback}</div>
-                    </div>
-                `).join('');
-            } catch (error) {
-                document.getElementById('reviews-container').innerHTML =
-                    '<div class="no-reviews">⚠️ Failed to load reviews. Please try again later.</div>';
+            if (!reviews.length) {
+            reviewsDiv.innerHTML = '<p>No low-rated reviews found.</p>';
+            return;
             }
+
+            reviewsDiv.innerHTML = reviews.map(r => `
+            <div class="review-card">
+                <div class="review-header">
+                <span class="review-rating">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</span>
+                <span class="review-name">${r.name ? r.name : 'Anonymous'}</span>
+                <span class="review-date">${new Date(r.createdAt).toLocaleString()}</span>
+                </div>
+                <div class="review-body">
+                <p>${r.feedback}</p>
+                <div class="review-contact">
+                    <span>Phone: ${r.phone ? r.phone : '-'}</span>
+                </div>
+                </div>
+            </div>
+            `).join('');
+        } catch (err) {
+            reviewsDiv.innerHTML = `<p style="color:red;">Error loading reviews.</p>`;
         }
-        loadReviews();
-    </script>
+        });
+
+  </script>
 </body>
 </html>
