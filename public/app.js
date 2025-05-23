@@ -17,7 +17,7 @@ stars.forEach(star => {
   });
 });
 
-const form = document.getElementById('detailedReview');
+const form = document.getElementById('lowRatingForm');
 if (form) {
   form.addEventListener('submit', async (e) => {
     e.preventDefault();

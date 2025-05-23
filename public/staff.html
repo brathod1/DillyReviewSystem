@@ -5,14 +5,49 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Customer Feedback Dashboard</title>
   <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
   <header class="dashboard-header">
     <img src="images/logo.png" alt="Logo">
     <h1>Customer Feedback Dashboard</h1>
-    <p>All 1-3 star reviews are shown below for your attention.</p>
+    <div class="quick-actions">
+      <button class="refresh-btn" onClick="window.location.reload()">Refresh</button>
+    </div>
   </header>
   <main class="dashboard-container">
+    <!-- Summary Stats -->
+    <div class="summary-cards">
+      <div class="card">
+        <h3>Total Reviews</h3>
+        <p id="totalReviews">0</p>
+      </div>
+      <div class="card">
+        <h3>Avg. Rating</h3>
+        <p id="avgRating">0.0</p>
+      </div>
+      <div class="card">
+        <h3>Low Ratings (1-3★)</h3>
+        <p id="lowRatings">0</p>
+      </div>
+    </div>
+    <!-- Filters -->
+    <div class="filters">
+      <select id="ratingFilter">
+        <option value="all">All Ratings (1-3★)</option>
+        <option value="1">1★</option>
+        <option value="2">2★</option>
+        <option value="3">3★</option>
+      </select>
+      <input type="date" id="startDate">
+      <input type="date" id="endDate">
+    </div>
+    <!-- Charts -->
+    <div class="chart-container">
+      <canvas id="trendChart"></canvas>
+      <canvas id="ratingDistribution"></canvas>
+    </div>
+    <!-- Reviews List -->
     <div id="reviews">Loading reviews...</div>
   </main>
   <footer class="site-footer">
@@ -39,39 +74,6 @@
       <span>All rights reserved.</span>
     </div>
   </footer>
-  <script>
-        document.addEventListener('DOMContentLoaded', async () => {
-        const reviewsDiv = document.getElementById('reviews');
-        try {
-            const response = await fetch('/reviews');
-            if (!response.ok) throw new Error('Failed to fetch reviews');
-            const reviews = await response.json();
-
-            if (!reviews.length) {
-            reviewsDiv.innerHTML = '<p>No low-rated reviews found.</p>';
-            return;
-            }
-
-            reviewsDiv.innerHTML = reviews.map(r => `
-            <div class="review-card">
-                <div class="review-header">
-                <span class="review-rating">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</span>
-                <span class="review-name">${r.name ? r.name : 'Anonymous'}</span>
-                <span class="review-date">${new Date(r.createdAt).toLocaleString()}</span>
-                </div>
-                <div class="review-body">
-                <p>${r.feedback}</p>
-                <div class="review-contact">
-                    <span>Phone: ${r.phone ? r.phone : '-'}</span>
-                </div>
-                </div>
-            </div>
-            `).join('');
-        } catch (err) {
-            reviewsDiv.innerHTML = `<p style="color:red;">Error loading reviews.</p>`;
-        }
-        });
-
-  </script>
+  <script src="staff.js"></script>
 </body>
 </html>
